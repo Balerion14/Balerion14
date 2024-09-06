@@ -43,6 +43,6 @@ I’m based in **France** and open to opportunities across France and neighborin
 
 ## 🌟 Top Languages
 
-![Top Langages](https://github-readme-stats.vercel.app/api/top-langs/?username=Balerion14&layout=compact&theme=radical)
+![Top Langages](https://github-readme-stats.vercel.app/api/top-langs/?username=Balerion14&layout=compact&theme=radical&count_private=true)
 
 
