@@ -39,9 +39,10 @@ I’m based in **France** and open to opportunities across France and neighborin
 
 ## 🏆 GitHub Stats
 
-![Your GitHub Stats](https://github-readme-stats.vercel.app/api?username={"Balerion14"}&show_icons=true&theme=radical)
+![Statistiques GitHub](https://github-readme-stats.vercel.app/api?username=Balerion14&show_icons=true&theme=radical)
 
 ## 🌟 Top Languages
 
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username={"Balerion14"}&layout=compact&theme=radical)
+![Top Langages](https://github-readme-stats.vercel.app/api/top-langs/?username=Balerion14&layout=compact&theme=radical)
+
 
