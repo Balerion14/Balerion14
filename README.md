@@ -15,22 +15,22 @@ I’m based in **France** and open to opportunities across France and neighborin
 
 ## 🛠 Technologies & Skills
 
-- **Languages**: Python, SQL, Java, JavaScript
-- **Frameworks**: TensorFlow, PyTorch, Scikit-learn
+- **Languages**: Python, SQL, Java, C, C++, Kotlin
+- **Frameworks**: Symfony, RagFlow, Flowise, gradio
+- **Libs**: Langchain, Langgraph, Crewai, TensorFlow, PyTorch, Scikit-learn, Numpy...
 - **Data Engineering**: Apache Spark, Hadoop, Airflow, ETL processes
-- **Machine Learning & AI**: Supervised/Unsupervised learning, Reinforcement Learning, NLP, Computer Vision
+- **Machine Learning & AI**: Supervised/Unsupervised learning, Reinforcement Learning, NLP, RAG (chunking (semantic, summary...), embedding, hybrid search/agent (intereact with sql database)), Computer Vision, Expert system (Symbolic AI (CSP, A stars, state graph with deep search...,Knowledge base and Knowledge engine))
 - **Deep Learning**: CNNs, RNNs, Transformers, LSTMs
-- **Databases**: MySQL, PostgreSQL, MongoDB
-- **Cloud**: AWS, GCP, Azure, Docker, Kubernetes
-- **Tools**: Git, VSCode, Jupyter, DVC, CI/CD tools
+- **Databases**: MySQL, PostgreSQL, MariaDb -> Design and management of relational databases and data warehouses, Visualization, WebScrapping, Data extraction
+- **Cloud**: AWS, Azure, Docker
+- **Tools**: Git, VSCode, Jupyter, Android Studio
+- **+**: Agile Method, Design and use of Framework, Tests, development environments
 
 ## 🔭 Current Projects
-- **RAG System Development**: Building an end-to-end Retrieval-Augmented Generation (RAG) system to enhance data query and management processes.
-- **CrossFit Data Analysis**: Analyzing sports performance data using machine learning to optimize training and recovery.
+- **RAG System Development**:I am working on a multi-agent Retrieval-Augmented Generation (RAG) system that can interact with various types of data (relational databases and data warehouses , documents, pictures, etc.)
 
 ## 🌱 I’m currently learning
-- Advanced **NLP** models like GPT-4 for more efficient language understanding.
-- **MLOps** to integrate machine learning into production environments.
+....
 
 ## 📫 How to reach me
 - **Email**: [benaitier.prof.g@gmail.com]
