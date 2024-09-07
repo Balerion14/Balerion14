@@ -1,7 +1,7 @@
 
 ## 👋 Hi, I’m Loris Benaitier!
 
-I hold a Master degree in Artificial Intelligence and Data Science** with expertise in:
+I hold a Master degree in **Artificial Intelligence and Data Science** with expertise in:
 
 - **Data Engineering**: Crafting efficient data pipelines and optimizing big data systems.
 - **Machine Learning**: Creating and deploying models to tackle complex challenges.
