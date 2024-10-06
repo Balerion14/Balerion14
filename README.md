@@ -34,7 +34,7 @@ I’m based in **France** and open to opportunities across France and neighborin
 
 ## 📫 How to reach me
 - **Email**: [benaitier.prof.g@gmail.com]
-- **LinkedIn**: ...
+- **LinkedIn**: [https://fr.linkedin.com/in/loris-benaitier-3400b9329]
 - **Twitter**: ....
 
 ## 🏆 GitHub Stats
