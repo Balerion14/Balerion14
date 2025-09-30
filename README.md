@@ -30,7 +30,8 @@ I’m based in **France** and open to opportunities across France and neighborin
 - **RAG System Development**:I am working on a multi-agent Retrieval-Augmented Generation (RAG) system that can interact with various types of data (relational databases and data warehouses , documents, pictures, etc.)
 
 ## 🌱 I’m currently learning
-....
+I follow ML Pro course, created and managed by
+MachineLearnia (Guillaume St-Cirgue)
 
 ## 📫 How to reach me
 - **Email**: [benaitier.prof.g@gmail.com]
