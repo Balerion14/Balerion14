@@ -36,7 +36,6 @@ MachineLearnia (Guillaume St-Cirgue)
 ## 📫 How to reach me
 - **Email**: [benaitier.prof.g@gmail.com]
 - **LinkedIn**: [https://fr.linkedin.com/in/loris-benaitier-3400b9329]
-- **Twitter**: ....
 
 ## 🏆 GitHub Stats
 
