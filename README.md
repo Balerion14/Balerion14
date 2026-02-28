@@ -15,15 +15,15 @@ I’m based in **France** and open to opportunities across France and neighborin
 
 ## 🛠 Technologies & Skills
 
-- **Languages**: Python, SQL, Java, C, C++, Kotlin
-- **Frameworks**: Symfony, RagFlow, Flowise, gradio
+- **Languages**: Python, SQL, Java, C, C++, Kotlin, JavaScript, TypeScript
+- **Frameworks**: Symfony, RagFlow, Flowise, gradio, Sveltekit
 - **Libs**: Langchain, Langgraph, Crewai, TensorFlow, PyTorch, Scikit-learn, Numpy...
 - **Data Engineering**: Apache Spark, Hadoop, Airflow, ETL processes
 - **Machine Learning & AI**: Supervised/Unsupervised learning, Reinforcement Learning, NLP, RAG (chunking (semantic, summary...), embedding, hybrid search/agent (intereact with sql database)), Computer Vision, Expert system (Symbolic AI (CSP, A stars, state graph with deep search...,Knowledge base and Knowledge engine))
 - **Deep Learning**: CNNs, RNNs, Transformers, LSTMs
 - **Databases**: MySQL, PostgreSQL, MariaDb -> Design and management of relational databases and data warehouses, Visualization, WebScrapping, Data extraction
-- **Cloud**: AWS, Azure, Docker
-- **Tools**: Git, VSCode, Jupyter, Android Studio
+- **Cloud**: Azure, Docker
+- **Tools**: Git, VSCode, Jupyter, Android Studio, Railway
 - **+**: Agile Method, Design and use of Framework, Tests, development environments
 
 ## 🔭 Current Projects
@@ -32,6 +32,7 @@ I’m based in **France** and open to opportunities across France and neighborin
 ## 🌱 I’m currently learning
 I follow ML Pro course, created and managed by
 MachineLearnia (Guillaume St-Cirgue)
+https://www.linkedin.com/in/guillaume-saint-cirgue-919a2677/
 
 ## 📫 How to reach me
 - **Email**: [benaitier.prof.g@gmail.com]
