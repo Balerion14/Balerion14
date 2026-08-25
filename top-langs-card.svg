@@ -26,7 +26,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
-    Jupyter Notebook
+    Python
   </text>
 
   <text
@@ -36,47 +36,11 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    87.0%
-  </text>
-  <text
-    x="20"
-    y="100"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#a9fef7">
-    HTML
-  </text>
-
-  <text
-    x="470"
-    y="100"
-    text-anchor="end"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#f8d847">
-    6.0%
-  </text>
-  <text
-    x="20"
-    y="130"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#a9fef7">
-    Python
-  </text>
-
-  <text
-    x="470"
-    y="130"
-    text-anchor="end"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#f8d847">
     4.1%
   </text>
   <text
     x="20"
-    y="160"
+    y="100"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -85,7 +49,7 @@
 
   <text
     x="470"
-    y="160"
+    y="100"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
@@ -94,7 +58,7 @@
   </text>
   <text
     x="20"
-    y="190"
+    y="130"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -103,7 +67,7 @@
 
   <text
     x="470"
-    y="190"
+    y="130"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
@@ -112,7 +76,7 @@
   </text>
   <text
     x="20"
-    y="220"
+    y="160"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -121,7 +85,7 @@
 
   <text
     x="470"
-    y="220"
+    y="160"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
@@ -130,7 +94,7 @@
   </text>
   <text
     x="20"
-    y="250"
+    y="190"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -139,7 +103,7 @@
 
   <text
     x="470"
-    y="250"
+    y="190"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
@@ -148,7 +112,7 @@
   </text>
   <text
     x="20"
-    y="280"
+    y="220"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -157,7 +121,7 @@
 
   <text
     x="470"
-    y="280"
+    y="220"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
@@ -166,7 +130,7 @@
   </text>
   <text
     x="20"
-    y="310"
+    y="250"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -175,7 +139,7 @@
 
   <text
     x="470"
-    y="310"
+    y="250"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
@@ -184,11 +148,47 @@
   </text>
   <text
     x="20"
-    y="340"
+    y="280"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
     PHP
+  </text>
+
+  <text
+    x="470"
+    y="280"
+    text-anchor="end"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#f8d847">
+    0.2%
+  </text>
+  <text
+    x="20"
+    y="310"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#a9fef7">
+    CMake
+  </text>
+
+  <text
+    x="470"
+    y="310"
+    text-anchor="end"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#f8d847">
+    0.1%
+  </text>
+  <text
+    x="20"
+    y="340"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#a9fef7">
+    TeX
   </text>
 
   <text
@@ -198,6 +198,6 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    0.2%
+    0.1%
   </text>
 </svg>
