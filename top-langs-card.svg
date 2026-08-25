@@ -6,8 +6,8 @@
   <rect
     width="100%"
     height="100%"
-    rx="6"
-    fill="#0d1117"
+    rx="8"
+    fill="#141321"
     stroke="#30363d"
   />
 
@@ -16,8 +16,8 @@
     y="35"
     font-family="Arial, sans-serif"
     font-size="18"
-    font-weight="600"
-    fill="#58a6ff">
+    font-weight="700"
+    fill="#fe428e">
     Most Used Languages
   </text>
   <text
@@ -25,7 +25,7 @@
     y="70"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     Jupyter Notebook
   </text>
 
@@ -35,7 +35,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     87.0%
   </text>
   <text
@@ -43,7 +43,7 @@
     y="100"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     HTML
   </text>
 
@@ -53,7 +53,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     6.0%
   </text>
   <text
@@ -61,7 +61,7 @@
     y="130"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     Python
   </text>
 
@@ -71,7 +71,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     4.1%
   </text>
   <text
@@ -79,7 +79,7 @@
     y="160"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     Java
   </text>
 
@@ -89,7 +89,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.6%
   </text>
   <text
@@ -97,7 +97,7 @@
     y="190"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     C
   </text>
 
@@ -107,7 +107,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.4%
   </text>
   <text
@@ -115,7 +115,7 @@
     y="220"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     C++
   </text>
 
@@ -125,7 +125,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.4%
   </text>
   <text
@@ -133,7 +133,7 @@
     y="250"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     TypeScript
   </text>
 
@@ -143,7 +143,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.3%
   </text>
   <text
@@ -151,7 +151,7 @@
     y="280"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     Svelte
   </text>
 
@@ -161,7 +161,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.3%
   </text>
   <text
@@ -169,7 +169,7 @@
     y="310"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     Kotlin
   </text>
 
@@ -179,7 +179,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.2%
   </text>
   <text
@@ -187,7 +187,7 @@
     y="340"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#c9d1d9">
+    fill="#a9fef7">
     PHP
   </text>
 
@@ -197,7 +197,7 @@
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
-    fill="#8b949e">
+    fill="#f8d847">
     0.2%
   </text>
 </svg>
