@@ -53,16 +53,38 @@ jobs:
 
           API_VERSION="2022-11-28"
 
-          # For languages:
+          # Only these languages are allowed in the final stats.
+          ALLOWED_LANGUAGES='[
+            "Python",
+            "TypeScript",
+            "JavaScript",
+            "Go",
+            "Java",
+            "C",
+            "C++",
+            "Kotlin",
+            "Svelte",
+            "Rust",
+            "Dart",
+            "Swift",
+            "R"
+          ]'
+
+          # Frequency:
           # {
           #   "Python": 12,
-          #   "TypeScript": 9,
+          #   "TypeScript": 8,
           #   "Go": 5
           # }
-          #
-          # means Python appears in 12 repositories,
-          # TypeScript in 9, Go in 5, etc.
-          echo '{}' > languages.json
+          echo '{}' > language_frequency.json
+
+          # Volume in bytes:
+          # {
+          #   "Python": 2500000,
+          #   "TypeScript": 1800000,
+          #   "Go": 900000
+          # }
+          echo '{}' > language_volume.json
 
           : > repos.txt
 
@@ -72,7 +94,7 @@ jobs:
           total_size=0
 
           # --------------------------------------------------
-          # Fetch repositories
+          # Fetch all accessible non-fork repositories
           # --------------------------------------------------
 
           while true; do
@@ -148,7 +170,7 @@ jobs:
           failed_count=0
 
           # --------------------------------------------------
-          # Count languages BY REPOSITORY
+          # Calculate language frequency + volume
           # --------------------------------------------------
 
           while IFS= read -r repo; do
@@ -169,90 +191,188 @@ jobs:
 
             processed_count=$((processed_count + 1))
 
-            # IMPORTANT:
-            # We completely ignore the number of bytes returned
-            # by GitHub.
-            #
-            # If Python exists in this repository => Python +1
-            # If Go exists => Go +1
-            # If TypeScript exists => TypeScript +1
-            #
-            # Jupyter Notebook and HTML are ignored.
+            # Keep only languages from our allowlist.
+            jq \
+              --argjson allowed "$ALLOWED_LANGUAGES" '
+                with_entries(
+                  select(
+                    .key as $language
+                    | $allowed
+                    | index($language) != null
+                  )
+                )
+              ' /tmp/languages-response.json > /tmp/filtered-languages.json
+
+            # --------------------------------------------------
+            # Frequency:
+            # each language gets +1 if it exists in this repo.
+            # --------------------------------------------------
 
             jq '
-              [
-                keys[]
-                | select(
-                    . != "Jupyter Notebook"
-                    and . != "HTML"
-                  )
-              ]
-            ' /tmp/languages-response.json > /tmp/repo-languages.json
+              keys
+            ' /tmp/filtered-languages.json > /tmp/repo-language-keys.json
 
             jq \
-              --slurpfile repo_langs /tmp/repo-languages.json '
+              --slurpfile repo_langs /tmp/repo-language-keys.json '
                 reduce ($repo_langs[0][]) as $language
                   (.;
                     .[$language] =
                       ((.[$language] // 0) + 1)
                   )
-              ' languages.json > languages.tmp.json
+              ' language_frequency.json > language_frequency.tmp.json
 
-            mv languages.tmp.json languages.json
+            mv language_frequency.tmp.json language_frequency.json
+
+            # --------------------------------------------------
+            # Volume:
+            # add the GitHub Linguist byte counts.
+            # --------------------------------------------------
+
+            jq -s '
+              reduce .[] as $item
+                ({};
+                  reduce ($item | to_entries[]) as $entry
+                    (.;
+                      .[$entry.key] =
+                        ((.[$entry.key] // 0) + $entry.value)
+                    )
+                )
+            ' language_volume.json /tmp/filtered-languages.json \
+              > language_volume.tmp.json
+
+            mv language_volume.tmp.json language_volume.json
 
           done < repos.txt
 
           echo "Repositories processed: $processed_count"
           echo "Repositories failed: $failed_count"
 
+          # --------------------------------------------------
+          # Debug summary
+          # --------------------------------------------------
+
           echo ""
           echo "================================"
-          echo "Language repository counts"
+          echo "Language frequency"
           echo "================================"
 
-          jq . languages.json
+          jq . language_frequency.json
+
+          echo ""
+          echo "================================"
+          echo "Language volume"
+          echo "================================"
+
+          jq . language_volume.json
 
           # --------------------------------------------------
-          # Calculate percentages
+          # Totals
+          # --------------------------------------------------
+
+          total_frequency=$(jq '
+            [.[]]
+            | add // 0
+          ' language_frequency.json)
+
+          total_volume=$(jq '
+            [.[]]
+            | add // 0
+          ' language_volume.json)
+
+          echo ""
+          echo "Total frequency occurrences: $total_frequency"
+          echo "Total language bytes: $total_volume"
+
+          # --------------------------------------------------
+          # Hybrid score
+          #
+          # score =
+          #   70% frequency share
+          # + 30% code volume share
           #
           # Example:
           #
-          # Python     12 repos
-          # TypeScript 8 repos
-          # Go          5 repos
+          # frequency_share = repo_count_for_language / total_frequency
+          # volume_share    = bytes_for_language / total_volume
           #
-          # Total language occurrences = 25
+          # score =
+          #   0.70 * frequency_share
+          # + 0.30 * volume_share
           #
-          # Python = 12 / 25 = 48%
+          # Final scores sum to 100%.
           # --------------------------------------------------
 
-          language_occurrences=$(jq '
-            [.[]]
-            | add // 0
-          ' languages.json)
+          jq -n \
+            --slurpfile frequency language_frequency.json \
+            --slurpfile volume language_volume.json \
+            --argjson total_frequency "$total_frequency" \
+            --argjson total_volume "$total_volume" '
+              (
+                ($frequency[0] | keys)
+                +
+                ($volume[0] | keys)
+                | unique
+              )
+              | map(
+                  . as $language
+
+                  | ($frequency[0][$language] // 0) as $freq
+                  | ($volume[0][$language] // 0) as $bytes
+
+                  | (
+                      if $total_frequency > 0
+                      then ($freq / $total_frequency)
+                      else 0
+                      end
+                    ) as $frequency_share
+
+                  | (
+                      if $total_volume > 0
+                      then ($bytes / $total_volume)
+                      else 0
+                      end
+                    ) as $volume_share
+
+                  | {
+                      language: $language,
+                      frequency: $freq,
+                      bytes: $bytes,
+                      frequency_share: $frequency_share,
+                      volume_share: $volume_share,
+                      score: (
+                        ($frequency_share * 0.70)
+                        +
+                        ($volume_share * 0.30)
+                      )
+                    }
+                )
+              | sort_by(.score)
+              | reverse
+            ' > hybrid_stats.json
 
           echo ""
-          echo "Total language occurrences: $language_occurrences"
+          echo "================================"
+          echo "Hybrid language scores"
+          echo "================================"
 
-          jq -r \
-            --argjson total "$language_occurrences" '
-              to_entries
-              | sort_by(.value)
-              | reverse
-              | .[:10]
-              | .[]
-              | [
-                  .key,
-                  .value,
-                  (
-                    if $total > 0
-                    then (.value / $total * 100)
-                    else 0
-                    end
-                  )
-                ]
-              | @tsv
-            ' languages.json > stats.tsv
+          jq . hybrid_stats.json
+
+          # Convert scores to percentages.
+          #
+          # Format:
+          # Language<TAB>repo_count<TAB>bytes<TAB>percentage
+
+          jq -r '
+            .[:10]
+            | .[]
+            | [
+                .language,
+                .frequency,
+                .bytes,
+                (.score * 100)
+              ]
+            | @tsv
+          ' hybrid_stats.json > stats.tsv
 
           echo ""
           echo "================================"
@@ -262,7 +382,7 @@ jobs:
           cat stats.tsv
 
           # --------------------------------------------------
-          # GitHub global stats card
+          # Global GitHub Stats card
           # --------------------------------------------------
 
           cat > github-stats-card.svg <<EOF
@@ -406,7 +526,7 @@ jobs:
 
           y=70
 
-          while IFS=$'\t' read -r language repo_usage percentage; do
+          while IFS=$'\t' read -r language frequency bytes percentage; do
             [ -z "$language" ] && continue
 
             percentage=$(printf "%.1f" "$percentage")
@@ -448,7 +568,9 @@ jobs:
           # --------------------------------------------------
 
           rm -f repos.txt
-          rm -f languages.json
+          rm -f language_frequency.json
+          rm -f language_volume.json
+          rm -f hybrid_stats.json
           rm -f stats.tsv
 
       - name: Commit and Push Stats
