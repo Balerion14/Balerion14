@@ -176,6 +176,12 @@ jobs:
           jq -r \
             --argjson total "$total_language_bytes" '
               to_entries
+              | map(
+                  select(
+                    .key != "Jupyter Notebook"
+                    and .key != "HTML"
+                  )
+                )
               | sort_by(.value)
               | reverse
               | .[:10]
