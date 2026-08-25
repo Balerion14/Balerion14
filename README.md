@@ -44,6 +44,6 @@ https://www.linkedin.com/in/guillaume-saint-cirgue-919a2677/
 
 ## 🌟 Top Languages
 
-![Top Langages](https://github-readme-stats.vercel.app/api/top-langs/?username=Balerion14&layout=compact&theme=radical&count_private=true)
+![Top Langages](./top-langs-card.svg)
 
 
