@@ -53,13 +53,27 @@ jobs:
 
           API_VERSION="2022-11-28"
 
+          # For languages:
+          # {
+          #   "Python": 12,
+          #   "TypeScript": 9,
+          #   "Go": 5
+          # }
+          #
+          # means Python appears in 12 repositories,
+          # TypeScript in 9, Go in 5, etc.
           echo '{}' > languages.json
+
           : > repos.txt
 
           page=1
           total_stars=0
           total_forks=0
           total_size=0
+
+          # --------------------------------------------------
+          # Fetch repositories
+          # --------------------------------------------------
 
           while true; do
             echo "Fetching repositories page $page..."
@@ -133,6 +147,10 @@ jobs:
           processed_count=0
           failed_count=0
 
+          # --------------------------------------------------
+          # Count languages BY REPOSITORY
+          # --------------------------------------------------
+
           while IFS= read -r repo; do
             [ -z "$repo" ] && continue
 
@@ -151,16 +169,34 @@ jobs:
 
             processed_count=$((processed_count + 1))
 
-            jq -s '
-              reduce .[] as $item
-                ({};
-                  reduce ($item | to_entries[]) as $entry
-                    (.;
-                      .[$entry.key] =
-                        ((.[$entry.key] // 0) + $entry.value)
-                    )
-                )
-            ' languages.json /tmp/languages-response.json > languages.tmp.json
+            # IMPORTANT:
+            # We completely ignore the number of bytes returned
+            # by GitHub.
+            #
+            # If Python exists in this repository => Python +1
+            # If Go exists => Go +1
+            # If TypeScript exists => TypeScript +1
+            #
+            # Jupyter Notebook and HTML are ignored.
+
+            jq '
+              [
+                keys[]
+                | select(
+                    . != "Jupyter Notebook"
+                    and . != "HTML"
+                  )
+              ]
+            ' /tmp/languages-response.json > /tmp/repo-languages.json
+
+            jq \
+              --slurpfile repo_langs /tmp/repo-languages.json '
+                reduce ($repo_langs[0][]) as $language
+                  (.;
+                    .[$language] =
+                      ((.[$language] // 0) + 1)
+                  )
+              ' languages.json > languages.tmp.json
 
             mv languages.tmp.json languages.json
 
@@ -170,44 +206,44 @@ jobs:
           echo "Repositories failed: $failed_count"
 
           echo ""
-          echo "Raw language totals:"
+          echo "================================"
+          echo "Language repository counts"
+          echo "================================"
+
           jq . languages.json
 
-          # Exclude languages that distort the profile statistics.
+          # --------------------------------------------------
+          # Calculate percentages
           #
-          # Jupyter Notebook is usually a container format around Python code.
-          # HTML can also represent generated/template-heavy content.
+          # Example:
           #
-          # The percentage denominator is recalculated AFTER filtering.
-          filtered_total=$(jq '
-            to_entries
-            | map(
-                select(
-                  .key != "Jupyter Notebook"
-                  and .key != "HTML"
-                )
-                | .value
-              )
+          # Python     12 repos
+          # TypeScript 8 repos
+          # Go          5 repos
+          #
+          # Total language occurrences = 25
+          #
+          # Python = 12 / 25 = 48%
+          # --------------------------------------------------
+
+          language_occurrences=$(jq '
+            [.[]]
             | add // 0
           ' languages.json)
 
-          echo "Filtered language bytes: $filtered_total"
+          echo ""
+          echo "Total language occurrences: $language_occurrences"
 
           jq -r \
-            --argjson total "$filtered_total" '
+            --argjson total "$language_occurrences" '
               to_entries
-              | map(
-                  select(
-                    .key != "Jupyter Notebook"
-                    and .key != "HTML"
-                  )
-                )
               | sort_by(.value)
               | reverse
               | .[:10]
               | .[]
               | [
                   .key,
+                  .value,
                   (
                     if $total > 0
                     then (.value / $total * 100)
@@ -219,7 +255,10 @@ jobs:
             ' languages.json > stats.tsv
 
           echo ""
-          echo "Final language stats:"
+          echo "================================"
+          echo "Final language stats"
+          echo "================================"
+
           cat stats.tsv
 
           # --------------------------------------------------
@@ -367,7 +406,7 @@ jobs:
 
           y=70
 
-          while IFS=$'\t' read -r language percentage; do
+          while IFS=$'\t' read -r language repo_usage percentage; do
             [ -z "$language" ] && continue
 
             percentage=$(printf "%.1f" "$percentage")
@@ -403,6 +442,10 @@ jobs:
           done < stats.tsv
 
           echo '</svg>' >> top-langs-card.svg
+
+          # --------------------------------------------------
+          # Cleanup
+          # --------------------------------------------------
 
           rm -f repos.txt
           rm -f languages.json
