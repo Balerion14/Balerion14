@@ -36,47 +36,11 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    58.4%
+    28.8%
   </text>
   <text
     x="20"
     y="100"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#a9fef7">
-    Java
-  </text>
-
-  <text
-    x="470"
-    y="100"
-    text-anchor="end"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#f8d847">
-    8.4%
-  </text>
-  <text
-    x="20"
-    y="130"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#a9fef7">
-    C
-  </text>
-
-  <text
-    x="470"
-    y="130"
-    text-anchor="end"
-    font-family="Arial, sans-serif"
-    font-size="14"
-    fill="#f8d847">
-    6.2%
-  </text>
-  <text
-    x="20"
-    y="160"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
@@ -85,12 +49,48 @@
 
   <text
     x="470"
+    y="100"
+    text-anchor="end"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#f8d847">
+    7.6%
+  </text>
+  <text
+    x="20"
+    y="130"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#a9fef7">
+    Shell
+  </text>
+
+  <text
+    x="470"
+    y="130"
+    text-anchor="end"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#f8d847">
+    6.8%
+  </text>
+  <text
+    x="20"
+    y="160"
+    font-family="Arial, sans-serif"
+    font-size="14"
+    fill="#a9fef7">
+    CSS
+  </text>
+
+  <text
+    x="470"
     y="160"
     text-anchor="end"
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    6.0%
+    5.9%
   </text>
   <text
     x="20"
@@ -108,7 +108,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    4.6%
+    5.1%
   </text>
   <text
     x="20"
@@ -116,7 +116,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
-    Svelte
+    JavaScript
   </text>
 
   <text
@@ -126,7 +126,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    3.8%
+    5.1%
   </text>
   <text
     x="20"
@@ -134,7 +134,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
-    Kotlin
+    Dockerfile
   </text>
 
   <text
@@ -144,7 +144,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    3.1%
+    4.2%
   </text>
   <text
     x="20"
@@ -152,7 +152,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
-    PHP
+    C
   </text>
 
   <text
@@ -162,7 +162,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    2.8%
+    4.2%
   </text>
   <text
     x="20"
@@ -170,7 +170,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
-    CMake
+    Java
   </text>
 
   <text
@@ -180,7 +180,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    1.3%
+    3.4%
   </text>
   <text
     x="20"
@@ -188,7 +188,7 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#a9fef7">
-    TeX
+    Makefile
   </text>
 
   <text
@@ -198,6 +198,6 @@
     font-family="Arial, sans-serif"
     font-size="14"
     fill="#f8d847">
-    1.1%
+    3.4%
   </text>
 </svg>
