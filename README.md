@@ -40,7 +40,7 @@ https://www.linkedin.com/in/guillaume-saint-cirgue-919a2677/
 
 ## 🏆 GitHub Stats
 
-![Statistiques GitHub](https://github-readme-stats.vercel.app/api?username=Balerion14&show_icons=true&theme=radical)
+![Statistiques GitHub](./github-stats-card.svg)
 
 ## 🌟 Top Languages
 
