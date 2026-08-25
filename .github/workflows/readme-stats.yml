@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
   schedule:
-    - cron: '0 * * * *' # met à jour toutes les heures
+    - cron: '0 * * * *'
 
 jobs:
   build:
@@ -17,6 +17,37 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Verify GitHub Token
+        env:
+          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+        run: |
+          set -e
+
+          if [ -z "$GH_STATS_TOKEN" ]; then
+            echo "ERROR: GH_STATS_TOKEN secret is missing or empty"
+            exit 1
+          fi
+
+          echo "GH_STATS_TOKEN is configured"
+
+          status=$(curl -s \
+            -o /tmp/github-user.json \
+            -w "%{http_code}" \
+            -H "Authorization: Bearer $GH_STATS_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/user)
+
+          echo "GitHub API status: $status"
+
+          if [ "$status" != "200" ]; then
+            echo "GitHub response:"
+            cat /tmp/github-user.json
+            exit 1
+          fi
+
+          jq -r '"Authenticated as: " + .login' /tmp/github-user.json
+
       - name: Generate GitHub Language Stats
         env:
           GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
@@ -25,46 +56,82 @@ jobs:
 
           API_VERSION="2022-11-28"
 
-          rm -f repos.json languages.json
           echo '{}' > languages.json
+          : > repos.txt
 
           page=1
 
           while true; do
-            response=$(curl -sSfL \
+            echo "Fetching repositories page $page..."
+
+            status=$(curl -s \
+              -o /tmp/repos.json \
+              -w "%{http_code}" \
               -H "Authorization: Bearer $GH_STATS_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: $API_VERSION" \
               "https://api.github.com/user/repos?visibility=all&affiliation=owner%2Ccollaborator%2Corganization_member&per_page=100&page=$page")
 
-            count=$(echo "$response" | jq 'length')
+            echo "Repositories API status: $status"
+
+            if [ "$status" != "200" ]; then
+              echo "GitHub response:"
+              cat /tmp/repos.json
+              exit 1
+            fi
+
+            count=$(jq 'length' /tmp/repos.json)
+
+            echo "Repositories found on page: $count"
 
             if [ "$count" -eq 0 ]; then
               break
             fi
 
-            echo "$response" | jq -r '
+            jq -r '
               .[]
               | select(.fork == false)
               | .full_name
-            ' >> repos.txt
+            ' /tmp/repos.json >> repos.txt
 
             page=$((page + 1))
           done
 
           sort -u repos.txt -o repos.txt
 
-          echo "Repositories included:"
+          repo_count=$(wc -l < repos.txt)
+
+          echo "================================"
+          echo "Repositories included: $repo_count"
+          echo "================================"
+
           cat repos.txt
 
           while IFS= read -r repo; do
-            echo "Processing $repo"
+            [ -z "$repo" ] && continue
 
-            response=$(curl -sSfL \
+            echo ""
+            echo "Processing: $repo"
+
+            status=$(curl -s \
+              -o /tmp/languages-response.json \
+              -w "%{http_code}" \
               -H "Authorization: Bearer $GH_STATS_TOKEN" \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: $API_VERSION" \
               "https://api.github.com/repos/$repo/languages")
+
+            echo "Languages API status: $status"
+
+            if [ "$status" != "200" ]; then
+              echo "WARNING: Could not read languages for $repo"
+              cat /tmp/languages-response.json
+              continue
+            fi
+
+            echo "Languages:"
+            cat /tmp/languages-response.json
+            echo ""
 
             jq -s '
               reduce .[] as $item
@@ -75,15 +142,23 @@ jobs:
                         ((.[$entry.key] // 0) + $entry.value)
                     )
                 )
-            ' languages.json <(echo "$response") > languages.tmp.json
+            ' languages.json /tmp/languages-response.json > languages.tmp.json
 
             mv languages.tmp.json languages.json
 
           done < repos.txt
 
+          echo ""
+          echo "================================"
+          echo "Combined language data"
+          echo "================================"
+
+          cat languages.json
+
           total=$(jq '[.[]] | add // 0' languages.json)
 
-          echo "Total bytes: $total"
+          echo ""
+          echo "Total language bytes: $total"
 
           jq -r \
             --argjson total "$total" '
@@ -105,7 +180,11 @@ jobs:
               | @tsv
             ' languages.json > stats.tsv
 
-          echo "Language stats:"
+          echo ""
+          echo "================================"
+          echo "Final language stats"
+          echo "================================"
+
           cat stats.tsv
 
           ROWS=$(wc -l < stats.tsv)
@@ -139,6 +218,7 @@ jobs:
           y=70
 
           while IFS=$'\t' read -r language bytes percentage; do
+            [ -z "$language" ] && continue
 
             percentage=$(printf "%.1f" "$percentage")
 
@@ -175,10 +255,18 @@ jobs:
 
           echo '</svg>' >> top-langs-card.svg
 
-          rm -f repos.txt languages.json stats.tsv
+          echo ""
+          echo "SVG generated successfully:"
+          ls -lh top-langs-card.svg
+
+          rm -f repos.txt
+          rm -f languages.json
+          rm -f stats.tsv
 
       - name: Commit and Push Stats
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
