@@ -136,8 +136,8 @@ jobs:
 
           sort -u repos.txt -o repos.txt
 
-          echo "Repositories included:"
-          cat repos.txt
+          repo_count=$(wc -l < repos.txt)
+          echo "Repositories included: $repo_count"
 
           while IFS= read -r repo; do
             [ -z "$repo" ] && continue
