@@ -28,8 +28,6 @@ jobs:
             exit 1
           fi
 
-          echo "GH_STATS_TOKEN is configured"
-
           status=$(curl -s \
             -o /tmp/github-user.json \
             -w "%{http_code}" \
@@ -41,14 +39,13 @@ jobs:
           echo "GitHub API status: $status"
 
           if [ "$status" != "200" ]; then
-            echo "GitHub response:"
             cat /tmp/github-user.json
             exit 1
           fi
 
           jq -r '"Authenticated as: " + .login' /tmp/github-user.json
 
-      - name: Generate GitHub Language Stats
+      - name: Generate GitHub Stats
         env:
           GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
         run: |
@@ -60,6 +57,10 @@ jobs:
           : > repos.txt
 
           page=1
+          total_repos=0
+          total_stars=0
+          total_forks=0
+          total_size=0
 
           while true; do
             echo "Fetching repositories page $page..."
@@ -72,17 +73,13 @@ jobs:
               -H "X-GitHub-Api-Version: $API_VERSION" \
               "https://api.github.com/user/repos?visibility=all&affiliation=owner%2Ccollaborator%2Corganization_member&per_page=100&page=$page")
 
-            echo "Repositories API status: $status"
-
             if [ "$status" != "200" ]; then
-              echo "GitHub response:"
+              echo "Repositories API failed:"
               cat /tmp/repos.json
               exit 1
             fi
 
             count=$(jq 'length' /tmp/repos.json)
-
-            echo "Repositories found on page: $count"
 
             if [ "$count" -eq 0 ]; then
               break
@@ -94,24 +91,58 @@ jobs:
               | .full_name
             ' /tmp/repos.json >> repos.txt
 
+            page_stars=$(jq '
+              [
+                .[]
+                | select(.fork == false)
+                | .stargazers_count
+              ]
+              | add // 0
+            ' /tmp/repos.json)
+
+            page_forks=$(jq '
+              [
+                .[]
+                | select(.fork == false)
+                | .forks_count
+              ]
+              | add // 0
+            ' /tmp/repos.json)
+
+            page_size=$(jq '
+              [
+                .[]
+                | select(.fork == false)
+                | .size
+              ]
+              | add // 0
+            ' /tmp/repos.json)
+
+            page_repos=$(jq '
+              [
+                .[]
+                | select(.fork == false)
+              ]
+              | length
+            ' /tmp/repos.json)
+
+            total_stars=$((total_stars + page_stars))
+            total_forks=$((total_forks + page_forks))
+            total_size=$((total_size + page_size))
+            total_repos=$((total_repos + page_repos))
+
             page=$((page + 1))
           done
 
           sort -u repos.txt -o repos.txt
 
-          repo_count=$(wc -l < repos.txt)
-
-          echo "================================"
-          echo "Repositories included: $repo_count"
-          echo "================================"
-
+          echo "Repositories included:"
           cat repos.txt
 
           while IFS= read -r repo; do
             [ -z "$repo" ] && continue
 
-            echo ""
-            echo "Processing: $repo"
+            echo "Processing languages for $repo"
 
             status=$(curl -s \
               -o /tmp/languages-response.json \
@@ -121,17 +152,10 @@ jobs:
               -H "X-GitHub-Api-Version: $API_VERSION" \
               "https://api.github.com/repos/$repo/languages")
 
-            echo "Languages API status: $status"
-
             if [ "$status" != "200" ]; then
-              echo "WARNING: Could not read languages for $repo"
-              cat /tmp/languages-response.json
+              echo "WARNING: cannot read languages for $repo"
               continue
             fi
-
-            echo "Languages:"
-            cat /tmp/languages-response.json
-            echo ""
 
             jq -s '
               reduce .[] as $item
@@ -145,23 +169,12 @@ jobs:
             ' languages.json /tmp/languages-response.json > languages.tmp.json
 
             mv languages.tmp.json languages.json
-
           done < repos.txt
 
-          echo ""
-          echo "================================"
-          echo "Combined language data"
-          echo "================================"
-
-          cat languages.json
-
-          total=$(jq '[.[]] | add // 0' languages.json)
-
-          echo ""
-          echo "Total language bytes: $total"
+          total_language_bytes=$(jq '[.[]] | add // 0' languages.json)
 
           jq -r \
-            --argjson total "$total" '
+            --argjson total "$total_language_bytes" '
               to_entries
               | sort_by(.value)
               | reverse
@@ -169,7 +182,6 @@ jobs:
               | .[]
               | [
                   .key,
-                  .value,
                   (
                     if $total > 0
                     then (.value / $total * 100)
@@ -180,12 +192,120 @@ jobs:
               | @tsv
             ' languages.json > stats.tsv
 
-          echo ""
-          echo "================================"
-          echo "Final language stats"
-          echo "================================"
+          # ----------------------------
+          # Global GitHub stats SVG
+          # ----------------------------
 
-          cat stats.tsv
+          cat > github-stats-card.svg <<EOF
+          <svg xmlns="http://www.w3.org/2000/svg"
+               width="500"
+               height="210"
+               viewBox="0 0 500 210">
+
+            <rect
+              width="100%"
+              height="100%"
+              rx="8"
+              fill="#141321"
+              stroke="#30363d"
+            />
+
+            <text
+              x="25"
+              y="38"
+              font-family="Arial, sans-serif"
+              font-size="20"
+              font-weight="700"
+              fill="#fe428e">
+              Balerion14's GitHub Stats
+            </text>
+
+            <text
+              x="25"
+              y="85"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              fill="#a9fef7">
+              Repositories
+            </text>
+
+            <text
+              x="470"
+              y="85"
+              text-anchor="end"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              font-weight="600"
+              fill="#f8d847">
+              $total_repos
+            </text>
+
+            <text
+              x="25"
+              y="120"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              fill="#a9fef7">
+              Stars
+            </text>
+
+            <text
+              x="470"
+              y="120"
+              text-anchor="end"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              font-weight="600"
+              fill="#f8d847">
+              $total_stars
+            </text>
+
+            <text
+              x="25"
+              y="155"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              fill="#a9fef7">
+              Forks
+            </text>
+
+            <text
+              x="470"
+              y="155"
+              text-anchor="end"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              font-weight="600"
+              fill="#f8d847">
+              $total_forks
+            </text>
+
+            <text
+              x="25"
+              y="190"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              fill="#a9fef7">
+              Repository size
+            </text>
+
+            <text
+              x="470"
+              y="190"
+              text-anchor="end"
+              font-family="Arial, sans-serif"
+              font-size="15"
+              font-weight="600"
+              fill="#f8d847">
+              ${total_size} KB
+            </text>
+
+          </svg>
+          EOF
+
+          # ----------------------------
+          # Top languages SVG
+          # ----------------------------
 
           ROWS=$(wc -l < stats.tsv)
           HEIGHT=$((80 + ROWS * 30))
@@ -199,8 +319,8 @@ jobs:
             <rect
               width="100%"
               height="100%"
-              rx="6"
-              fill="#0d1117"
+              rx="8"
+              fill="#141321"
               stroke="#30363d"
             />
 
@@ -209,15 +329,15 @@ jobs:
               y="35"
               font-family="Arial, sans-serif"
               font-size="18"
-              font-weight="600"
-              fill="#58a6ff">
+              font-weight="700"
+              fill="#fe428e">
               Most Used Languages
             </text>
           EOF
 
           y=70
 
-          while IFS=$'\t' read -r language bytes percentage; do
+          while IFS=$'\t' read -r language percentage; do
             [ -z "$language" ] && continue
 
             percentage=$(printf "%.1f" "$percentage")
@@ -234,7 +354,7 @@ jobs:
               y="$y"
               font-family="Arial, sans-serif"
               font-size="14"
-              fill="#c9d1d9">
+              fill="#a9fef7">
               $language_escaped
             </text>
 
@@ -244,20 +364,15 @@ jobs:
               text-anchor="end"
               font-family="Arial, sans-serif"
               font-size="14"
-              fill="#8b949e">
+              fill="#f8d847">
               ${percentage}%
             </text>
           EOF
 
             y=$((y + 30))
-
           done < stats.tsv
 
           echo '</svg>' >> top-langs-card.svg
-
-          echo ""
-          echo "SVG generated successfully:"
-          ls -lh top-langs-card.svg
 
           rm -f repos.txt
           rm -f languages.json
@@ -270,7 +385,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add top-langs-card.svg
+          git add github-stats-card.svg top-langs-card.svg
 
           if git diff --cached --quiet; then
             echo "No changes to commit"
